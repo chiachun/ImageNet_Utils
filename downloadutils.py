@@ -12,15 +12,17 @@ if __name__ == '__main__':
     p.add_argument('--downloadImages', help='Should download images', action='store_true', default=False)
     p.add_argument('--downloadOriginalImages', help='Should download original images', action='store_true', default=False)
     p.add_argument('--downloadBoundingBox', help='Should download bouding box annotation files', action='store_true', default=False)
-    # p.add_argument('--jobs', '-j', type=int, default=1, help='Number of parallel threads to download')
-    # p.add_argument('--timeout', '-t', type=int, default=10, help='Timeout per image in seconds')
-    # p.add_argument('--retry', '-r', type=int, default=10, help='Max count of retry for each image')
+    # p.add_argument('--jobs', '-j', type=int, default=4, help='Number of parallel threads to download')
+    # p.add_argument('--timeout', '-t', type=int, default=3, help='Timeout per image in seconds')
+    # p.add_argument('--retry', '-r', type=int, default=3, help='Max count of retry for each image')
     p.add_argument('--verbose', '-v', action='store_true', help='Enable verbose log')
+    p.add_argument('--destdir', '-ddir', nargs='+', default='.', help='destination directory')
     args = p.parse_args()
     if args.wnid is None:
         print 'No wnid'
         sys.exit()
-
+    if args.destdir:
+        print 'save downloaded images to %s' % args.destdir[0]
     downloader = imagedownloader.ImageNetDownloader()
     username = None
     accessKey = None
@@ -32,7 +34,7 @@ if __name__ == '__main__':
     if args.downloadImages is True:
         for id in args.wnid:
             list = downloader.getImageURLsOfWnid(id)
-            downloader.downloadImagesByURLs(id, list)
+            downloader.downloadImagesByURLs(id, list, args.destdir[0])
 
     if args.downloadBoundingBox is True:
         for id in args.wnid:

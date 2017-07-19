@@ -87,20 +87,25 @@ class ImageNetDownloader:
 
         return imageUrls
 
-    def mkWnidDir(self, wnid):
-        if not os.path.exists(wnid):
-            os.mkdir(wnid)
-        return os.path.abspath(wnid)
+    def mkWnidDir(self, wnid, rootdir):
+        WnidDir = rootdir + '/' + wnid
+        if not os.path.exists(WnidDir):
+            os.mkdir(WnidDir)
+        return os.path.abspath(WnidDir)
 
-    def downloadImagesByURLs(self, wnid, imageUrls):
+    def downloadImagesByURLs(self, wnid, imageUrls, rootdir='./', nImages=10000):
         # save to the dir e.g: n005555_urlimages/
-        wnid_urlimages_dir = os.path.join(self.mkWnidDir(wnid), str(wnid) + '_urlimages')
+        wnid_urlimages_dir = os.path.join(self.mkWnidDir(wnid,rootdir), str(wnid) + '_urlimages')
         if not os.path.exists(wnid_urlimages_dir):
             os.mkdir(wnid_urlimages_dir)
-
+        counter = 0
         for url in imageUrls:
+            print counter
+            if counter > nImages:
+                break
             try:
                 self.download_file(url, wnid_urlimages_dir)
+                counter +=1
             except Exception, error:
                 print 'Fail to download : ' + url
                 print str(error)
